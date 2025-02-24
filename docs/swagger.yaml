@@ -1,0 +1,163 @@
+basePath: /
+definitions:
+  CreateExampleResponse:
+    properties:
+      data:
+        $ref: '#/definitions/ExampleResponse'
+      message:
+        type: string
+    type: object
+  ExampleRequest:
+    properties:
+      amount:
+        minimum: 1
+        type: number
+      example_type:
+        enum:
+        - credit
+        - debit
+        type: string
+      name:
+        type: string
+    required:
+    - amount
+    - example_type
+    - name
+    type: object
+  ExampleResponse:
+    properties:
+      amount:
+        type: number
+      created_at:
+        type: string
+      example_type:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  GetExampleByIdResponse:
+    properties:
+      data:
+        $ref: '#/definitions/ExampleResponse'
+      message:
+        type: string
+    type: object
+  GetExamplesResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/ExampleResponse'
+        type: array
+      message:
+        type: string
+    type: object
+  UpdateExampleResponse:
+    properties:
+      data:
+        $ref: '#/definitions/ExampleResponse'
+      message:
+        type: string
+    type: object
+info:
+  contact: {}
+  description: REST API using Golang
+  title: Go REST API
+  version: "1.0"
+paths:
+  /examples:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/GetExamplesResponse'
+      summary: Get All Examples
+      tags:
+      - examples
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Request Body
+        in: body
+        name: requestBody
+        required: true
+        schema:
+          $ref: '#/definitions/ExampleRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/CreateExampleResponse'
+      summary: Create Example
+      tags:
+      - examples
+  /examples/{id}:
+    delete:
+      parameters:
+      - description: Example ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/UpdateExampleResponse'
+      summary: Delete Example
+      tags:
+      - examples
+    get:
+      parameters:
+      - description: Example ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/GetExampleByIdResponse'
+      summary: Get Example by ID
+      tags:
+      - examples
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: Example ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Request Body
+        in: body
+        name: requestBody
+        required: true
+        schema:
+          $ref: '#/definitions/ExampleRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/UpdateExampleResponse'
+      summary: Update Example
+      tags:
+      - examples
+swagger: "2.0"
