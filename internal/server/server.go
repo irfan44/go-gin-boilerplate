@@ -3,7 +3,9 @@ package server
 import (
 	"context"
 	"database/sql"
+	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/irfan44/go-http-boilerplate/docs"
 	example_handler "github.com/irfan44/go-http-boilerplate/internal/domain/example/handler"
 	example_service "github.com/irfan44/go-http-boilerplate/internal/domain/example/service"
 	example_repo "github.com/irfan44/go-http-boilerplate/internal/repository/example"
@@ -90,6 +92,10 @@ func (s *server) initializeTable() error {
 	return nil
 }
 
+func (s *server) initializeSwagger() {
+	docs.SwaggerInfo.Host = fmt.Sprintf("%s%s", s.cfg.Http.Host, s.cfg.Http.Port)
+}
+
 func (s *server) Run() {
 	if err := s.initializeTable(); err != nil {
 		return
@@ -103,6 +109,8 @@ func (s *server) Run() {
 	repo := s.initializeRepositories()
 	svc := s.initializeServices(repo)
 	s.initializeHandlers(svc, v, ctx)
+
+	s.initializeSwagger()
 
 	s.initializeServer()
 }

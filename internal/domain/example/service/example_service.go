@@ -12,7 +12,7 @@ import (
 type (
 	ExampleService interface {
 		GetExamples(ctx context.Context) (*dto.GetExamplesResponseDTO, errors.MessageErr)
-		GetExampleById(id uuid.UUID, ctx context.Context) (*dto.GetExampleResponseDTO, errors.MessageErr)
+		GetExampleById(id uuid.UUID, ctx context.Context) (*dto.GetExampleByIdResponseDTO, errors.MessageErr)
 		CreateExample(example dto.ExampleRequestDTO, ctx context.Context) (*dto.CreateExampleResponseDTO, errors.MessageErr)
 		UpdateExample(example dto.ExampleRequestDTO, id uuid.UUID, ctx context.Context) (*dto.UpdateExampleResponseDTO, errors.MessageErr)
 		DeleteExample(id uuid.UUID, ctx context.Context) (*dto.DeleteExampleResponseDTO, errors.MessageErr)
@@ -29,7 +29,7 @@ func (s *exampleService) GetExamples(ctx context.Context) (*dto.GetExamplesRespo
 	return nil, nil
 }
 
-func (s *exampleService) GetExampleById(id uuid.UUID, ctx context.Context) (*dto.GetExampleResponseDTO, errors.MessageErr) {
+func (s *exampleService) GetExampleById(id uuid.UUID, ctx context.Context) (*dto.GetExampleByIdResponseDTO, errors.MessageErr) {
 	return nil, nil
 }
 

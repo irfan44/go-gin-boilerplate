@@ -13,7 +13,8 @@ type Example struct {
 	Name        string
 	ExampleType string
 	Amount      float64
-	Timestamp   time.Time
+	CreatedAt   time.Time
+	UpdatedAt   time.Time
 }
 
 func (e *Example) ToExampleDTO() *dto.ExampleResponseDTO {
@@ -22,7 +23,8 @@ func (e *Example) ToExampleDTO() *dto.ExampleResponseDTO {
 		Name:        e.Name,
 		ExampleType: e.ExampleType,
 		Amount:      e.Amount,
-		Timestamp:   e.Timestamp,
+		CreatedAt:   e.CreatedAt,
+		UpdatedAt:   e.UpdatedAt,
 	}
 }
 

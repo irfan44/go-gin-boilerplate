@@ -15,6 +15,10 @@ func init() {
 	}
 }
 
+// @title Go REST API
+// @version 1.0
+// @description REST API using Golang
+// @BasePath /
 func main() {
 	cfg := config.NewConfig()
 
