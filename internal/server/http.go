@@ -1,6 +1,7 @@
 package server
 
 import (
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
@@ -17,8 +18,16 @@ func applicationJsonResponseMiddleware() gin.HandlerFunc {
 	}
 }
 
+func enableCorsMiddleware() gin.HandlerFunc {
+	return cors.New(cors.Config{
+		AllowAllOrigins: true,
+		AllowMethods:    []string{"GET", "POST", "PUT", "DELETE"},
+	})
+}
+
 func (s *server) runGinServer() error {
 	s.r.Use(applicationJsonResponseMiddleware())
+	s.r.Use(enableCorsMiddleware())
 	s.r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	return s.r.Run(s.cfg.Http.Port)
 }
