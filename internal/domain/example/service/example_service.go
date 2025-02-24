@@ -19,7 +19,7 @@ type (
 	}
 
 	exampleService struct {
-		repo repository.ExampleRepository
+		repo example_repository.ExampleRepository
 	}
 )
 
@@ -45,7 +45,7 @@ func (s *exampleService) DeleteExample(id uuid.UUID, ctx context.Context) (*dto.
 	return nil, nil
 }
 
-func NewExampleService(repo repository.ExampleRepository) ExampleService {
+func NewExampleService(repo example_repository.ExampleRepository) ExampleService {
 	return &exampleService{
 		repo: repo,
 	}

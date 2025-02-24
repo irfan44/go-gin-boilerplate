@@ -8,7 +8,7 @@ import (
 )
 
 type exampleHandler struct {
-	svc service.ExampleService
+	svc example_service.ExampleService
 	r   *gin.Engine
 	v   *validator.Validate
 	ctx context.Context
@@ -37,7 +37,7 @@ func (h *exampleHandler) DeleteExample(c *gin.Context) {
 }
 
 func NewExampleHandler(
-	svc service.ExampleService,
+	svc example_service.ExampleService,
 	r *gin.Engine,
 	v *validator.Validate,
 	ctx context.Context,
