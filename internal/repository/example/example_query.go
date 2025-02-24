@@ -1,4 +1,4 @@
-package repository
+package example_repository
 
 const (
 	GET_EXAMPLES        = ""

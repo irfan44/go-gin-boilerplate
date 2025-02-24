@@ -3,12 +3,11 @@ package server
 import (
 	"context"
 	"database/sql"
-	"fmt"
-	"github.com/irfan44/go-http-boilerplate/internal/domain/example/handler"
-	"github.com/irfan44/go-http-boilerplate/internal/domain/example/service"
-	"github.com/irfan44/go-http-boilerplate/internal/repository/example"
+	"github.com/gin-gonic/gin"
+	example_handler "github.com/irfan44/go-http-boilerplate/internal/domain/example/handler"
+	example_service "github.com/irfan44/go-http-boilerplate/internal/domain/example/service"
+	example_repo "github.com/irfan44/go-http-boilerplate/internal/repository/example"
 	"log"
-	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
@@ -20,21 +19,21 @@ import (
 type (
 	server struct {
 		cfg config.Config
-		mux *http.ServeMux
+		r   *gin.Engine
 		db  *sql.DB
 	}
 
 	repositories struct {
-		exampleRepository repository.ExampleRepository
+		exampleRepository example_repo.ExampleRepository
 	}
 
 	services struct {
-		exampleService service.ExampleService
+		exampleService example_service.ExampleService
 	}
 )
 
 func (s *server) initializeRepositories() *repositories {
-	exampleRepo := repository.NewExampleRepository(s.db)
+	exampleRepo := example_repo.NewExampleRepository(s.db)
 
 	return &repositories{
 		exampleRepository: exampleRepo,
@@ -42,7 +41,7 @@ func (s *server) initializeRepositories() *repositories {
 }
 
 func (s *server) initializeServices(repo *repositories) *services {
-	exampleService := service.NewExampleService(repo.exampleRepository)
+	exampleService := example_service.NewExampleService(repo.exampleRepository)
 
 	return &services{
 		exampleService: exampleService,
@@ -50,7 +49,7 @@ func (s *server) initializeServices(repo *repositories) *services {
 }
 
 func (s *server) initializeHandlers(svc *services, v *validator.Validate, ctx context.Context) {
-	exampleHandler := handler.NewExampleHandler(svc.exampleService, s.mux, v, ctx)
+	exampleHandler := example_handler.NewExampleHandler(svc.exampleService, s.r, v, ctx)
 	exampleHandler.MapRoutes()
 }
 
@@ -60,14 +59,14 @@ func (s *server) initializeServer() {
 
 	go func() {
 		log.Printf("Server listening on PORT %s\n", s.cfg.Http.Port)
-		if err := http.ListenAndServe(s.cfg.Http.Port, s.mux); err != nil {
+		if err := s.runGinServer(); err != nil {
 			log.Printf("Server error: %s\n", err.Error())
 		}
 	}()
 
 	osCall := <-ch
 
-	fmt.Printf("Server shutdown: %+v\n", osCall)
+	log.Printf("Server shutdown: %+v\n", osCall)
 }
 
 func (s *server) initializeTable() error {
@@ -111,7 +110,7 @@ func (s *server) Run() {
 func NewServer(cfg config.Config, db *sql.DB) *server {
 	return &server{
 		cfg: cfg,
-		mux: http.NewServeMux(),
+		r:   gin.Default(),
 		db:  db,
 	}
 }

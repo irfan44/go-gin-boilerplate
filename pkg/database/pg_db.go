@@ -29,11 +29,11 @@ func InitPGDB(cfg config.Config) (*sql.DB, error) {
 	err = db.Ping()
 
 	if err != nil {
-		fmt.Printf("Failed to ping to database: %s\n", err.Error())
+		log.Printf("Failed to ping to database: %s\n", err.Error())
 		return nil, err
 	}
 
-	fmt.Println("Successfully connect to database")
+	log.Println("Successfully connect to database")
 
 	return db, nil
 }

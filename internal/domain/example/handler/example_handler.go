@@ -1,62 +1,50 @@
-package handler
+package example_handler
 
 import (
 	"context"
-	"github.com/irfan44/go-http-boilerplate/internal/domain/example/service"
-	"github.com/irfan44/go-http-boilerplate/pkg/internal_http"
-	"net/http"
-
+	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
+	"github.com/irfan44/go-http-boilerplate/internal/domain/example/service"
 )
 
 type exampleHandler struct {
 	svc service.ExampleService
-	mux *http.ServeMux
+	r   *gin.Engine
 	v   *validator.Validate
 	ctx context.Context
 }
 
 // TODO: 5. adjust handler
 
-func (h *exampleHandler) GetExamples() http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		internal_http.ApplyJSON(w)
-	}
+func (h *exampleHandler) GetExamples(c *gin.Context) {
+
 }
 
-func (h *exampleHandler) GetExampleById() http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		internal_http.ApplyJSON(w)
-	}
+func (h *exampleHandler) GetExampleById(c *gin.Context) {
+
 }
 
-func (h *exampleHandler) CreateExample() http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		internal_http.ApplyJSON(w)
-	}
+func (h *exampleHandler) CreateExample(c *gin.Context) {
+
 }
 
-func (h *exampleHandler) UpdateExample() http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		internal_http.ApplyJSON(w)
-	}
+func (h *exampleHandler) UpdateExample(c *gin.Context) {
+
 }
 
-func (h *exampleHandler) DeleteExample() http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		internal_http.ApplyJSON(w)
-	}
+func (h *exampleHandler) DeleteExample(c *gin.Context) {
+
 }
 
 func NewExampleHandler(
 	svc service.ExampleService,
-	mux *http.ServeMux,
+	r *gin.Engine,
 	v *validator.Validate,
 	ctx context.Context,
 ) *exampleHandler {
 	return &exampleHandler{
 		svc: svc,
-		mux: mux,
+		r:   r,
 		v:   v,
 		ctx: ctx,
 	}
