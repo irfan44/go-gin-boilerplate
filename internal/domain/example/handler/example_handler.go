@@ -4,7 +4,11 @@ import (
 	"context"
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
+	"github.com/google/uuid"
 	"github.com/irfan44/go-http-boilerplate/internal/domain/example/service"
+	"github.com/irfan44/go-http-boilerplate/internal/dto"
+	"github.com/irfan44/go-http-boilerplate/pkg/errors"
+	"net/http"
 )
 
 type exampleHandler struct {
@@ -22,7 +26,15 @@ type exampleHandler struct {
 // @Success 200 {object} GetExamplesResponse
 // @Router /examples [get]
 func (h *exampleHandler) GetExamples(c *gin.Context) {
+	ctx := c.Request.Context()
+	result, err := h.svc.GetExamples(ctx)
 
+	if err != nil {
+		c.JSON(err.StatusCode(), err)
+		return
+	}
+
+	c.JSON(http.StatusOK, result.Data)
 }
 
 // @Summary Get Example by ID
@@ -32,7 +44,24 @@ func (h *exampleHandler) GetExamples(c *gin.Context) {
 // @Success 200 {object} GetExampleByIdResponse
 // @Router /examples/{id} [get]
 func (h *exampleHandler) GetExampleById(c *gin.Context) {
+	ctx := c.Request.Context()
+	id := c.Param("id")
 
+	parsedId, errParse := uuid.Parse(id)
+
+	if errParse != nil {
+		errMsg := errors.NewBadRequest(errParse.Error())
+		c.JSON(errMsg.StatusCode(), errMsg)
+	}
+
+	result, err := h.svc.GetExampleById(ctx, parsedId)
+
+	if err != nil {
+		c.JSON(err.StatusCode(), err)
+		return
+	}
+
+	c.JSON(http.StatusOK, result.Data)
 }
 
 // @Summary Create Example
@@ -43,7 +72,23 @@ func (h *exampleHandler) GetExampleById(c *gin.Context) {
 // @Success 200 {object} CreateExampleResponse
 // @Router /examples [post]
 func (h *exampleHandler) CreateExample(c *gin.Context) {
+	ctx := c.Request.Context()
+	payload := dto.ExampleRequestDTO{}
 
+	if err := c.ShouldBindJSON(&payload); err != nil {
+		errData := errors.NewUnprocessibleEntityError(err.Error())
+		c.JSON(errData.StatusCode(), errData)
+		return
+	}
+
+	result, err := h.svc.CreateExample(ctx, payload)
+
+	if err != nil {
+		c.JSON(err.StatusCode(), err)
+		return
+	}
+
+	c.JSON(http.StatusCreated, result)
 }
 
 // @Summary Update Example
@@ -55,7 +100,32 @@ func (h *exampleHandler) CreateExample(c *gin.Context) {
 // @Success 200 {object} UpdateExampleResponse
 // @Router /examples/{id} [put]
 func (h *exampleHandler) UpdateExample(c *gin.Context) {
+	ctx := c.Request.Context()
+	id := c.Param("id")
 
+	parsedId, errParse := uuid.Parse(id)
+
+	if errParse != nil {
+		errMsg := errors.NewBadRequest(errParse.Error())
+		c.JSON(errMsg.StatusCode(), errMsg)
+	}
+
+	payload := dto.ExampleRequestDTO{}
+
+	if err := c.ShouldBindJSON(&payload); err != nil {
+		errData := errors.NewUnprocessibleEntityError(err.Error())
+		c.JSON(errData.StatusCode(), errData)
+		return
+	}
+
+	result, err := h.svc.UpdateExample(ctx, parsedId, payload)
+
+	if err != nil {
+		c.JSON(err.StatusCode(), err)
+		return
+	}
+
+	c.JSON(http.StatusOK, result)
 }
 
 // @Summary Delete Example
@@ -65,7 +135,24 @@ func (h *exampleHandler) UpdateExample(c *gin.Context) {
 // @Success 200 {object} UpdateExampleResponse
 // @Router /examples/{id} [delete]
 func (h *exampleHandler) DeleteExample(c *gin.Context) {
+	ctx := c.Request.Context()
+	id := c.Param("id")
 
+	parsedId, errParse := uuid.Parse(id)
+
+	if errParse != nil {
+		errMsg := errors.NewBadRequest(errParse.Error())
+		c.JSON(errMsg.StatusCode(), errMsg)
+	}
+
+	result, errData := h.svc.DeleteExample(ctx, parsedId)
+
+	if errData != nil {
+		c.JSON(errData.StatusCode(), errData)
+		return
+	}
+
+	c.JSON(http.StatusNoContent, result)
 }
 
 func NewExampleHandler(

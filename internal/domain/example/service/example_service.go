@@ -12,10 +12,10 @@ import (
 type (
 	ExampleService interface {
 		GetExamples(ctx context.Context) (*dto.GetExamplesResponseDTO, errors.MessageErr)
-		GetExampleById(id uuid.UUID, ctx context.Context) (*dto.GetExampleByIdResponseDTO, errors.MessageErr)
-		CreateExample(example dto.ExampleRequestDTO, ctx context.Context) (*dto.CreateExampleResponseDTO, errors.MessageErr)
-		UpdateExample(example dto.ExampleRequestDTO, id uuid.UUID, ctx context.Context) (*dto.UpdateExampleResponseDTO, errors.MessageErr)
-		DeleteExample(id uuid.UUID, ctx context.Context) (*dto.DeleteExampleResponseDTO, errors.MessageErr)
+		GetExampleById(ctx context.Context, id uuid.UUID) (*dto.GetExampleByIdResponseDTO, errors.MessageErr)
+		CreateExample(ctx context.Context, example dto.ExampleRequestDTO) (*dto.CreateExampleResponseDTO, errors.MessageErr)
+		UpdateExample(ctx context.Context, id uuid.UUID, example dto.ExampleRequestDTO) (*dto.UpdateExampleResponseDTO, errors.MessageErr)
+		DeleteExample(ctx context.Context, id uuid.UUID) (*dto.DeleteExampleResponseDTO, errors.MessageErr)
 	}
 
 	exampleService struct {
@@ -29,19 +29,19 @@ func (s *exampleService) GetExamples(ctx context.Context) (*dto.GetExamplesRespo
 	return nil, nil
 }
 
-func (s *exampleService) GetExampleById(id uuid.UUID, ctx context.Context) (*dto.GetExampleByIdResponseDTO, errors.MessageErr) {
+func (s *exampleService) GetExampleById(ctx context.Context, id uuid.UUID) (*dto.GetExampleByIdResponseDTO, errors.MessageErr) {
 	return nil, nil
 }
 
-func (s *exampleService) CreateExample(example dto.ExampleRequestDTO, ctx context.Context) (*dto.CreateExampleResponseDTO, errors.MessageErr) {
+func (s *exampleService) CreateExample(ctx context.Context, example dto.ExampleRequestDTO) (*dto.CreateExampleResponseDTO, errors.MessageErr) {
 	return nil, nil
 }
 
-func (s *exampleService) UpdateExample(example dto.ExampleRequestDTO, id uuid.UUID, ctx context.Context) (*dto.UpdateExampleResponseDTO, errors.MessageErr) {
+func (s *exampleService) UpdateExample(ctx context.Context, id uuid.UUID, example dto.ExampleRequestDTO) (*dto.UpdateExampleResponseDTO, errors.MessageErr) {
 	return nil, nil
 }
 
-func (s *exampleService) DeleteExample(id uuid.UUID, ctx context.Context) (*dto.DeleteExampleResponseDTO, errors.MessageErr) {
+func (s *exampleService) DeleteExample(ctx context.Context, id uuid.UUID) (*dto.DeleteExampleResponseDTO, errors.MessageErr) {
 	return nil, nil
 }
 
