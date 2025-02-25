@@ -13,30 +13,28 @@ const (
 	invalidTokenErrorMessage = "Invalid token."
 )
 
-type internalJwtImpl struct {
-}
+type (
+	InternalJwt interface {
+		GenerateToken(jwtClaim jwt.MapClaims, secretKey string) string
+		ValidateBearerToken(bearerToken string, secretKey string) (jwt.MapClaims, errs.MessageErr)
+	}
 
-type InternalJwt interface {
-	GenerateToken(jwtClaim jwt.MapClaims, secretKey string) string
-	ValidateBearerToken(bearerToken string, secretKey string) (jwt.MapClaims, errs.MessageErr)
-}
+	internalJwt struct {
+	}
+)
 
-func NewInternalJwt() InternalJwt {
-	return &internalJwtImpl{}
-}
-
-func (ij *internalJwtImpl) signToken(claims jwt.MapClaims, secretKey string) string {
+func (ij *internalJwt) signToken(claims jwt.MapClaims, secretKey string) string {
 	parseToken := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	signedToken, _ := parseToken.SignedString([]byte(secretKey))
 
 	return signedToken
 }
 
-func (ij *internalJwtImpl) GenerateToken(jwtClaim jwt.MapClaims, secretKey string) string {
+func (ij *internalJwt) GenerateToken(jwtClaim jwt.MapClaims, secretKey string) string {
 	return ij.signToken(jwtClaim, secretKey)
 }
 
-func (ij *internalJwtImpl) parseToken(stringToken string, secretKey string) (*jwt.Token, error) {
+func (ij *internalJwt) parseToken(stringToken string, secretKey string) (*jwt.Token, error) {
 	token, err := jwt.Parse(stringToken, func(t *jwt.Token) (any, error) {
 		if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, errors.New(invalidTokenErrorMessage)
@@ -61,7 +59,7 @@ func (ij *internalJwtImpl) parseToken(stringToken string, secretKey string) (*jw
 	return token, nil
 }
 
-func (ij *internalJwtImpl) ValidateBearerToken(
+func (ij *internalJwt) ValidateBearerToken(
 	bearerToken string,
 	secretKey string,
 ) (jwt.MapClaims, errs.MessageErr) {
@@ -93,4 +91,8 @@ func (ij *internalJwtImpl) ValidateBearerToken(
 	}
 
 	return mapClaims, nil
+}
+
+func NewInternalJwt() InternalJwt {
+	return &internalJwt{}
 }
