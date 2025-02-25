@@ -75,7 +75,7 @@ func (h *exampleHandler) CreateExample(c *gin.Context) {
 	ctx := c.Request.Context()
 	payload := dto.ExampleRequestDTO{}
 
-	if err := c.ShouldBindJSON(&payload); err != nil {
+	if err := c.ShouldBindBodyWithJSON(&payload); err != nil {
 		errData := errors.NewUnprocessibleEntityError(err.Error())
 		c.JSON(errData.StatusCode(), errData)
 		return
@@ -112,7 +112,7 @@ func (h *exampleHandler) UpdateExample(c *gin.Context) {
 
 	payload := dto.ExampleRequestDTO{}
 
-	if err := c.ShouldBindJSON(&payload); err != nil {
+	if err := c.ShouldBindBodyWithJSON(&payload); err != nil {
 		errData := errors.NewUnprocessibleEntityError(err.Error())
 		c.JSON(errData.StatusCode(), errData)
 		return
