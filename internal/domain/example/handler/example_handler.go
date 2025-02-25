@@ -7,7 +7,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/irfan44/go-http-boilerplate/internal/domain/example/service"
 	"github.com/irfan44/go-http-boilerplate/internal/dto"
-	"github.com/irfan44/go-http-boilerplate/pkg/errors"
+	"github.com/irfan44/go-http-boilerplate/pkg/errs"
 	"net/http"
 )
 
@@ -50,7 +50,7 @@ func (h *exampleHandler) GetExampleById(c *gin.Context) {
 	parsedId, errParse := uuid.Parse(id)
 
 	if errParse != nil {
-		errMsg := errors.NewBadRequest(errParse.Error())
+		errMsg := errs.NewBadRequest(errParse.Error())
 		c.JSON(errMsg.StatusCode(), errMsg)
 	}
 
@@ -76,7 +76,7 @@ func (h *exampleHandler) CreateExample(c *gin.Context) {
 	payload := dto.ExampleRequestDTO{}
 
 	if err := c.ShouldBindBodyWithJSON(&payload); err != nil {
-		errData := errors.NewUnprocessibleEntityError(err.Error())
+		errData := errs.NewUnprocessibleEntityError(err.Error())
 		c.JSON(errData.StatusCode(), errData)
 		return
 	}
@@ -106,14 +106,14 @@ func (h *exampleHandler) UpdateExample(c *gin.Context) {
 	parsedId, errParse := uuid.Parse(id)
 
 	if errParse != nil {
-		errMsg := errors.NewBadRequest(errParse.Error())
+		errMsg := errs.NewBadRequest(errParse.Error())
 		c.JSON(errMsg.StatusCode(), errMsg)
 	}
 
 	payload := dto.ExampleRequestDTO{}
 
 	if err := c.ShouldBindBodyWithJSON(&payload); err != nil {
-		errData := errors.NewUnprocessibleEntityError(err.Error())
+		errData := errs.NewUnprocessibleEntityError(err.Error())
 		c.JSON(errData.StatusCode(), errData)
 		return
 	}
@@ -141,7 +141,7 @@ func (h *exampleHandler) DeleteExample(c *gin.Context) {
 	parsedId, errParse := uuid.Parse(id)
 
 	if errParse != nil {
-		errMsg := errors.NewBadRequest(errParse.Error())
+		errMsg := errs.NewBadRequest(errParse.Error())
 		c.JSON(errMsg.StatusCode(), errMsg)
 	}
 
