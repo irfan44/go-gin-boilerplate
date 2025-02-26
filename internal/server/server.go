@@ -83,7 +83,6 @@ func (s *server) initializeHandlers(svc *services, v *validator.Validate, ctx co
 }
 
 func (s *server) initializeMiddleware(internalJwt internal_jwt.InternalJwt) *middlewares {
-	s.r.Use(middleware.ApplicationJsonResponseMiddleware())
 	s.r.Use(middleware.EnableCorsMiddleware())
 
 	authMiddleware := middleware.NewAuthMiddleware(internalJwt, s.cfg)
