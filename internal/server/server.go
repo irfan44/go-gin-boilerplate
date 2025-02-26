@@ -42,6 +42,10 @@ type (
 		userService    user_service.UserService
 		authService    auth_service.AuthService
 	}
+
+	middlewares struct {
+		authMiddleware middleware.AuthMiddleware
+	}
 )
 
 func (s *server) initializeRepositories() *repositories {
@@ -66,24 +70,28 @@ func (s *server) initializeServices(repo *repositories, internalJwt internal_jwt
 	}
 }
 
-func (s *server) initializeHandlers(svc *services, v *validator.Validate, ctx context.Context) {
+func (s *server) initializeHandlers(svc *services, v *validator.Validate, ctx context.Context, m *middlewares) {
 	exampleHandler := example_handler.NewExampleHandler(svc.exampleService, s.r, v, ctx)
 	_ = exampleHandler
 	//exampleHandler.MapRoutes()
 
-	userHandler := user_handler.NewUserHandler(svc.userService, s.r, v, ctx)
+	userHandler := user_handler.NewUserHandler(svc.userService, s.r, v, ctx, m.authMiddleware)
 	userHandler.MapRoutes()
 
 	authHandler := auth_handler.NewExampleHandler(svc.authService, s.r, v, ctx)
 	authHandler.MapRoutes()
 }
 
-func (s *server) initializeMiddleware(internalJwt internal_jwt.InternalJwt, svc *services) {
+func (s *server) initializeMiddleware(internalJwt internal_jwt.InternalJwt) *middlewares {
 	s.r.Use(middleware.ApplicationJsonResponseMiddleware())
 	s.r.Use(middleware.EnableCorsMiddleware())
 
-	authMiddleware := middleware.NewAuthMiddleware(internalJwt, s.cfg, svc.userService)
-	s.r.Use(authMiddleware.Authentication)
+	authMiddleware := middleware.NewAuthMiddleware(internalJwt, s.cfg)
+	s.r.Use(authMiddleware.Authentication())
+
+	return &middlewares{
+		authMiddleware: authMiddleware,
+	}
 }
 
 func (s *server) initializeServer() {
@@ -150,8 +158,8 @@ func (s *server) Run() {
 
 	repo := s.initializeRepositories()
 	svc := s.initializeServices(repo, internalJwt)
-	s.initializeMiddleware(internalJwt, svc)
-	s.initializeHandlers(svc, v, ctx)
+	m := s.initializeMiddleware(internalJwt)
+	s.initializeHandlers(svc, v, ctx, m)
 
 	s.initializeSwagger()
 

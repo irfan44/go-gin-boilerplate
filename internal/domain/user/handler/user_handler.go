@@ -6,6 +6,7 @@ import (
 	"github.com/go-playground/validator/v10"
 	"github.com/irfan44/go-http-boilerplate/internal/domain/user/service"
 	"github.com/irfan44/go-http-boilerplate/internal/dto"
+	"github.com/irfan44/go-http-boilerplate/internal/middleware"
 	"github.com/irfan44/go-http-boilerplate/pkg/errs"
 	"net/http"
 	"strconv"
@@ -16,6 +17,7 @@ type userHandler struct {
 	r   *gin.Engine
 	v   *validator.Validate
 	ctx context.Context
+	m   middleware.AuthMiddleware
 }
 
 // @Summary Get All Users
@@ -170,11 +172,13 @@ func NewUserHandler(
 	r *gin.Engine,
 	v *validator.Validate,
 	ctx context.Context,
+	m middleware.AuthMiddleware,
 ) *userHandler {
 	return &userHandler{
 		svc: svc,
 		r:   r,
 		v:   v,
 		ctx: ctx,
+		m:   m,
 	}
 }

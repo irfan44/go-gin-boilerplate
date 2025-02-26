@@ -4,7 +4,6 @@ import (
 	"context"
 	"github.com/gin-gonic/gin"
 	"github.com/irfan44/go-http-boilerplate/internal/config"
-	"github.com/irfan44/go-http-boilerplate/internal/domain/user/service"
 	"github.com/irfan44/go-http-boilerplate/pkg/errs"
 	"github.com/irfan44/go-http-boilerplate/pkg/internal_jwt"
 	"strings"
@@ -12,74 +11,100 @@ import (
 
 type (
 	AuthMiddleware interface {
-		Authentication(c *gin.Context)
+		Authentication() gin.HandlerFunc
+		AdminAuthorization() gin.HandlerFunc
+		TellerAuthorization() gin.HandlerFunc
 	}
 
 	authMiddleware struct {
 		ctx         context.Context
 		internalJwt internal_jwt.InternalJwt
 		cfg         config.Config
-		userService user_service.UserService
 	}
 )
 
-func (m *authMiddleware) Authentication(c *gin.Context) {
-	path := strings.HasPrefix(c.FullPath(), "/auth") || strings.HasPrefix(c.FullPath(), "/swagger")
+func (m *authMiddleware) Authentication() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		if publicPath := strings.HasPrefix(c.FullPath(), "/auth") || strings.HasPrefix(c.FullPath(), "/swagger"); publicPath {
+			c.Next()
+			return
+		}
 
-	if path {
+		authHeader := c.GetHeader("Authorization")
+
+		mapClaims, err := m.internalJwt.ValidateBearerToken(authHeader, m.cfg.Jwt.SecretKey)
+
+		if err != nil {
+			c.AbortWithStatusJSON(err.StatusCode(), err)
+			return
+		}
+
+		id, ok := mapClaims["id"].(float64)
+
+		if !ok {
+			err = errs.NewUnauthenticatedError("Invalid token.")
+			c.AbortWithStatusJSON(err.StatusCode(), err)
+			return
+		}
+
+		username, ok := mapClaims["username"].(string)
+
+		if !ok {
+			err = errs.NewUnauthenticatedError("Invalid token.")
+			c.JSON(err.StatusCode(), err)
+			return
+		}
+
+		role, ok := mapClaims["role"].(string)
+
+		if !ok {
+			err = errs.NewUnauthenticatedError("Invalid token.")
+			c.JSON(err.StatusCode(), err)
+			return
+		}
+
+		c.Set("userId", int(id))
+		c.Set("username", username)
+		c.Set("role", role)
+
 		c.Next()
-		return
 	}
+}
 
-	authHeader, ok := c.Get("Authorization")
+func (m *authMiddleware) AdminAuthorization() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		role, ok := c.Value("role").(string)
 
-	if !ok {
-		err := errs.NewUnauthenticatedError("Invalid token.")
-		c.JSON(err.StatusCode(), err)
+		if !ok || role != "ADMIN" {
+			err := errs.NewUnauthorizedError("Cannot access endpoint.")
+			c.AbortWithStatusJSON(err.StatusCode(), err)
+			return
+		}
+
+		c.Next()
 	}
+}
 
-	token := authHeader.(string)
+func (m *authMiddleware) TellerAuthorization() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		role, ok := c.Value("role").(string)
 
-	mapClaims, err := m.internalJwt.ValidateBearerToken(token, m.cfg.Jwt.SecretKey)
+		if !ok || role != "TELLER" {
+			err := errs.NewUnauthorizedError("Cannot access endpoint.")
+			c.AbortWithStatusJSON(err.StatusCode(), err)
+			return
+		}
 
-	if err != nil {
-		c.JSON(err.StatusCode(), err)
+		c.Next()
 	}
-
-	id, ok := mapClaims["id"].(float64)
-
-	if !ok {
-		err = errs.NewUnauthenticatedError("Invalid token.")
-		c.JSON(err.StatusCode(), err)
-	}
-
-	role, ok := mapClaims["role"].(string)
-
-	if !ok {
-		err = errs.NewUnauthenticatedError("Invalid token.")
-		c.JSON(err.StatusCode(), err)
-	}
-
-	ctx := c.Request.Context()
-
-	if _, err = m.userService.GetUserById(ctx, int(id)); err != nil {
-		c.JSON(err.StatusCode(), err)
-	}
-
-	c.Set("userId", int(id))
-	c.Set("role", role)
-
-	c.Next()
 }
 
 func NewAuthMiddleware(
 	internalJwt internal_jwt.InternalJwt,
 	cfg config.Config,
-	userService user_service.UserService,
 ) AuthMiddleware {
 	return &authMiddleware{
 		internalJwt: internalJwt,
 		cfg:         cfg,
-		userService: userService,
 	}
 }
