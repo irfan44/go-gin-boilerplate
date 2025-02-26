@@ -37,3 +37,26 @@ func InitPGDB(cfg config.Config) (*sql.DB, error) {
 
 	return db, nil
 }
+
+func InitializeTable(db *sql.DB) error {
+	// TODO: fill init table query
+	q1 := `
+		CREATE TABLE IF NOT EXISTS users (
+		    id SERIAL primary key,
+		    username VARCHAR (255) UNIQUE NOT NULL,
+		    password VARCHAR (255) NOT NULL,
+		    role VARCHAR (30) NOT NULL CHECK (role IN ('TELLER', 'CUSTOMER', 'ADMIN')) DEFAULT 'CUSTOMER',
+		    created_at TIMESTAMPTZ DEFAULT NOW(),
+			updated_at TIMESTAMPTZ DEFAULT NOW()
+		)
+	`
+
+	if _, err := db.Exec(q1); err != nil {
+		log.Printf("Initialize table error: %s\n", err.Error())
+		return err
+	}
+
+	log.Println("Successfully initiate table")
+
+	return nil
+}

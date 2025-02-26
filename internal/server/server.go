@@ -16,6 +16,7 @@ import (
 	"github.com/irfan44/go-http-boilerplate/internal/middleware"
 	example_repo "github.com/irfan44/go-http-boilerplate/internal/repository/example"
 	user_repo "github.com/irfan44/go-http-boilerplate/internal/repository/user"
+	"github.com/irfan44/go-http-boilerplate/pkg/database"
 	"github.com/irfan44/go-http-boilerplate/pkg/internal_jwt"
 	"log"
 	"os"
@@ -109,42 +110,12 @@ func (s *server) initializeServer() {
 	log.Printf("Server shutdown: %+v\n", osCall)
 }
 
-func (s *server) initializeTable() error {
-	// TODO: fill init table query
-	query := `
-		CREATE TABLE IF NOT EXISTS users (
-		    id SERIAL primary key,
-		    username VARCHAR (255) UNIQUE NOT NULL,
-		    password VARCHAR (255) NOT NULL,
-		    role VARCHAR (30) NOT NULL CHECK (role IN ('TELLER', 'CUSTOMER', 'ADMIN')),
-		    created_at TIMESTAMPTZ DEFAULT NOW(),
-			updated_at TIMESTAMPTZ DEFAULT NOW()
-		)
-	`
-
-	if _, err := s.db.Exec(query); err != nil {
-		log.Printf("Initialize table error: %s\n", err.Error())
-
-		if err = s.db.Close(); err != nil {
-			log.Printf("Graceful DB shutdown: %s\n", err.Error())
-		} else {
-			log.Printf("Successfully graceful DB shutdown \n")
-		}
-
-		return err
-	}
-
-	log.Println("Successfully initiate table")
-
-	return nil
-}
-
 func (s *server) initializeSwagger() {
 	docs.SwaggerInfo.Host = fmt.Sprintf("%s%s", s.cfg.Http.Host, s.cfg.Http.Port)
 }
 
 func (s *server) Run() {
-	if err := s.initializeTable(); err != nil {
+	if err := database.InitializeTable(s.db); err != nil {
 		return
 	}
 
