@@ -7,6 +7,13 @@ definitions:
       message:
         type: string
     type: object
+  CreateUserResponse:
+    properties:
+      data:
+        $ref: '#/definitions/UserResponse'
+      message:
+        type: string
+    type: object
   ExampleRequest:
     properties:
       amount:
@@ -55,11 +62,119 @@ definitions:
       message:
         type: string
     type: object
+  GetUserByIdResponse:
+    properties:
+      data:
+        $ref: '#/definitions/UserResponse'
+      message:
+        type: string
+    type: object
+  GetUsersResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/UserResponse'
+        type: array
+      message:
+        type: string
+    type: object
+  LoginRequest:
+    properties:
+      password:
+        minLength: 8
+        type: string
+      username:
+        type: string
+    required:
+    - password
+    - username
+    type: object
+  LoginResponse:
+    properties:
+      access_token:
+        type: string
+      message:
+        type: string
+    type: object
+  RegisterRequest:
+    properties:
+      password:
+        minLength: 8
+        type: string
+      role:
+        enum:
+        - TELLER
+        - CUSTOMER
+        type: string
+      username:
+        type: string
+    required:
+    - password
+    - role
+    - username
+    type: object
+  RegisterResponse:
+    properties:
+      message:
+        type: string
+    type: object
   UpdateExampleResponse:
     properties:
       data:
         $ref: '#/definitions/ExampleResponse'
       message:
+        type: string
+    type: object
+  UpdateUserRequest:
+    properties:
+      role:
+        enum:
+        - TELLER
+        - CUSTOMER
+        - ADMIN
+        type: string
+      username:
+        type: string
+    required:
+    - role
+    - username
+    type: object
+  UpdateUserResponse:
+    properties:
+      data:
+        $ref: '#/definitions/UserResponse'
+      message:
+        type: string
+    type: object
+  UserRequest:
+    properties:
+      password:
+        minLength: 8
+        type: string
+      role:
+        enum:
+        - TELLER
+        - CUSTOMER
+        - ADMIN
+        type: string
+      username:
+        type: string
+    required:
+    - password
+    - role
+    - username
+    type: object
+  UserResponse:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: integer
+      role:
+        type: string
+      updated_at:
+        type: string
+      username:
         type: string
     type: object
 info:
@@ -68,6 +183,48 @@ info:
   title: Go REST API
   version: "1.0"
 paths:
+  /auth/login:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Request Body
+        in: body
+        name: requestBody
+        required: true
+        schema:
+          $ref: '#/definitions/LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/LoginResponse'
+      summary: Login
+      tags:
+      - auth
+  /auth/register:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Request Body
+        in: body
+        name: requestBody
+        required: true
+        schema:
+          $ref: '#/definitions/RegisterRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/RegisterResponse'
+      summary: Register
+      tags:
+      - auth
   /examples:
     get:
       produces:
@@ -160,4 +317,96 @@ paths:
       summary: Update Example
       tags:
       - examples
+  /users:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/GetUsersResponse'
+      summary: Get All Users
+      tags:
+      - users
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Request Body
+        in: body
+        name: requestBody
+        required: true
+        schema:
+          $ref: '#/definitions/UserRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/CreateUserResponse'
+      summary: Create User
+      tags:
+      - users
+  /users/{id}:
+    delete:
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/UpdateUserResponse'
+      summary: Delete User
+      tags:
+      - users
+    get:
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/GetUserByIdResponse'
+      summary: Get User by ID
+      tags:
+      - users
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Request Body
+        in: body
+        name: requestBody
+        required: true
+        schema:
+          $ref: '#/definitions/UpdateUserRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/UpdateUserResponse'
+      summary: Update User
+      tags:
+      - users
 swagger: "2.0"

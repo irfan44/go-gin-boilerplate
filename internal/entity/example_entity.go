@@ -31,7 +31,7 @@ func (e *Example) ToExampleDTO() *dto.ExampleResponseDTO {
 type Examples []Example
 
 func (e Examples) ToExamplesDTO() []dto.ExampleResponseDTO {
-	var result []dto.ExampleResponseDTO
+	result := []dto.ExampleResponseDTO{}
 
 	for _, example := range e {
 		result = append(result, *example.ToExampleDTO())

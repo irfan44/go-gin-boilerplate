@@ -9,6 +9,7 @@ type (
 	Config struct {
 		Http     httpConfig
 		Postgres postgresConfig
+		Jwt      jwtConfig
 	}
 
 	httpConfig struct {
@@ -22,6 +23,10 @@ type (
 		User     string
 		Password string
 		DBName   string
+	}
+
+	jwtConfig struct {
+		SecretKey string
 	}
 )
 
@@ -37,6 +42,10 @@ func NewConfig() Config {
 			User:     os.Getenv(constants.DBUser),
 			Password: os.Getenv(constants.DBPassword),
 			DBName:   os.Getenv(constants.DBName),
+		},
+
+		Jwt: jwtConfig{
+			SecretKey: os.Getenv(constants.JwtSecretKey),
 		},
 	}
 

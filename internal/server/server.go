@@ -6,9 +6,16 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/irfan44/go-http-boilerplate/docs"
+	auth_handler "github.com/irfan44/go-http-boilerplate/internal/domain/auth/handler"
+	auth_service "github.com/irfan44/go-http-boilerplate/internal/domain/auth/service"
 	example_handler "github.com/irfan44/go-http-boilerplate/internal/domain/example/handler"
 	example_service "github.com/irfan44/go-http-boilerplate/internal/domain/example/service"
+	user_handler "github.com/irfan44/go-http-boilerplate/internal/domain/user/handler"
+	user_service "github.com/irfan44/go-http-boilerplate/internal/domain/user/service"
+	"github.com/irfan44/go-http-boilerplate/internal/middleware"
 	example_repo "github.com/irfan44/go-http-boilerplate/internal/repository/example"
+	user_repo "github.com/irfan44/go-http-boilerplate/internal/repository/user"
+	"github.com/irfan44/go-http-boilerplate/pkg/internal_jwt"
 	"log"
 	"os"
 	"os/signal"
@@ -27,32 +34,56 @@ type (
 
 	repositories struct {
 		exampleRepository example_repo.ExampleRepository
+		userRepository    user_repo.UserRepository
 	}
 
 	services struct {
 		exampleService example_service.ExampleService
+		userService    user_service.UserService
+		authService    auth_service.AuthService
 	}
 )
 
 func (s *server) initializeRepositories() *repositories {
 	exampleRepo := example_repo.NewExampleRepository(s.db)
+	userRepo := user_repo.NewUserRepository(s.db)
 
 	return &repositories{
 		exampleRepository: exampleRepo,
+		userRepository:    userRepo,
 	}
 }
 
-func (s *server) initializeServices(repo *repositories) *services {
+func (s *server) initializeServices(repo *repositories, internalJwt internal_jwt.InternalJwt) *services {
 	exampleService := example_service.NewExampleService(repo.exampleRepository)
+	userService := user_service.NewUserService(repo.userRepository)
+	authService := auth_service.NewAuthService(repo.userRepository, internalJwt, s.cfg)
 
 	return &services{
 		exampleService: exampleService,
+		userService:    userService,
+		authService:    authService,
 	}
 }
 
 func (s *server) initializeHandlers(svc *services, v *validator.Validate, ctx context.Context) {
 	exampleHandler := example_handler.NewExampleHandler(svc.exampleService, s.r, v, ctx)
-	exampleHandler.MapRoutes()
+	_ = exampleHandler
+	//exampleHandler.MapRoutes()
+
+	userHandler := user_handler.NewUserHandler(svc.userService, s.r, v, ctx)
+	userHandler.MapRoutes()
+
+	authHandler := auth_handler.NewExampleHandler(svc.authService, s.r, v, ctx)
+	authHandler.MapRoutes()
+}
+
+func (s *server) initializeMiddleware(internalJwt internal_jwt.InternalJwt, svc *services) {
+	s.r.Use(middleware.ApplicationJsonResponseMiddleware())
+	s.r.Use(middleware.EnableCorsMiddleware())
+
+	authMiddleware := middleware.NewAuthMiddleware(internalJwt, s.cfg, svc.userService)
+	s.r.Use(authMiddleware.Authentication)
 }
 
 func (s *server) initializeServer() {
@@ -73,7 +104,16 @@ func (s *server) initializeServer() {
 
 func (s *server) initializeTable() error {
 	// TODO: fill init table query
-	query := ``
+	query := `
+		CREATE TABLE IF NOT EXISTS users (
+		    id SERIAL primary key,
+		    username VARCHAR (255) UNIQUE NOT NULL,
+		    password VARCHAR (255) NOT NULL,
+		    role VARCHAR (30) NOT NULL CHECK (role IN ('TELLER', 'CUSTOMER', 'ADMIN')),
+		    created_at TIMESTAMPTZ DEFAULT NOW(),
+			updated_at TIMESTAMPTZ DEFAULT NOW()
+		)
+	`
 
 	if _, err := s.db.Exec(query); err != nil {
 		log.Printf("Initialize table error: %s\n", err.Error())
@@ -106,8 +146,11 @@ func (s *server) Run() {
 
 	v := validator.New()
 
+	internalJwt := internal_jwt.NewInternalJwt()
+
 	repo := s.initializeRepositories()
-	svc := s.initializeServices(repo)
+	svc := s.initializeServices(repo, internalJwt)
+	s.initializeMiddleware(internalJwt, svc)
 	s.initializeHandlers(svc, v, ctx)
 
 	s.initializeSwagger()

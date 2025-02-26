@@ -22,14 +22,14 @@ func (e *ErrorData) Error() string {
 
 func NewUnauthorizedError(message string) MessageErr {
 	return &ErrorData{
-		ResponseCode: http.StatusForbidden,
+		ResponseCode: http.StatusUnauthorized,
 		ErrMessage:   message,
 	}
 }
 
 func NewUnauthenticatedError(message string) MessageErr {
 	return &ErrorData{
-		ResponseCode: http.StatusUnauthorized,
+		ResponseCode: http.StatusForbidden,
 		ErrMessage:   message,
 	}
 }

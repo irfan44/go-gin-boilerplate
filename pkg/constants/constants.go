@@ -9,4 +9,6 @@ const (
 	DBUser     = "DB_USER"
 	DBPassword = "DB_PASSWORD"
 	DBName     = "DB_NAME"
+
+	JwtSecretKey = "JWT_SECRET_KEY"
 )
