@@ -2,8 +2,8 @@ package entity
 
 import (
 	"github.com/golang-jwt/jwt"
-	"github.com/irfan44/go-http-boilerplate/internal/dto"
-	"github.com/irfan44/go-http-boilerplate/pkg/errs"
+	"github.com/irfan44/go-gin-boilerplate/internal/dto"
+	"github.com/irfan44/go-gin-boilerplate/pkg/errs"
 	"golang.org/x/crypto/bcrypt"
 	"time"
 )

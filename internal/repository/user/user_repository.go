@@ -5,10 +5,10 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"github.com/irfan44/go-http-boilerplate/pkg/errs"
+	"github.com/irfan44/go-gin-boilerplate/pkg/errs"
 	"log"
 
-	"github.com/irfan44/go-http-boilerplate/internal/entity"
+	"github.com/irfan44/go-gin-boilerplate/internal/entity"
 )
 
 type (

@@ -2,7 +2,7 @@ package entity
 
 import (
 	"github.com/google/uuid"
-	"github.com/irfan44/go-http-boilerplate/internal/dto"
+	"github.com/irfan44/go-gin-boilerplate/internal/dto"
 	"time"
 )
 

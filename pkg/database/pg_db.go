@@ -7,7 +7,7 @@ import (
 
 	_ "github.com/lib/pq"
 
-	"github.com/irfan44/go-http-boilerplate/internal/config"
+	"github.com/irfan44/go-gin-boilerplate/internal/config"
 )
 
 func InitPGDB(cfg config.Config) (*sql.DB, error) {

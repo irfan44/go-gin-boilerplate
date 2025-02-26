@@ -1,7 +1,7 @@
 package internal_http
 
 import (
-	"github.com/irfan44/go-http-boilerplate/internal/dto"
+	"github.com/irfan44/go-gin-boilerplate/internal/dto"
 )
 
 func NewBaseResponse(message string) dto.BaseResponse {

@@ -1,4 +1,4 @@
-module github.com/irfan44/go-http-boilerplate
+module github.com/irfan44/go-gin-boilerplate
 
 go 1.24.0
 

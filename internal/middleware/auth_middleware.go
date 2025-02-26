@@ -3,9 +3,9 @@ package middleware
 import (
 	"context"
 	"github.com/gin-gonic/gin"
-	"github.com/irfan44/go-http-boilerplate/internal/config"
-	"github.com/irfan44/go-http-boilerplate/pkg/errs"
-	"github.com/irfan44/go-http-boilerplate/pkg/internal_jwt"
+	"github.com/irfan44/go-gin-boilerplate/internal/config"
+	"github.com/irfan44/go-gin-boilerplate/pkg/errs"
+	"github.com/irfan44/go-gin-boilerplate/pkg/internal_jwt"
 	"strings"
 )
 

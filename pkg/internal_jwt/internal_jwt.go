@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	"github.com/golang-jwt/jwt"
-	"github.com/irfan44/go-http-boilerplate/pkg/errs"
+	"github.com/irfan44/go-gin-boilerplate/pkg/errs"
 )
 
 const (

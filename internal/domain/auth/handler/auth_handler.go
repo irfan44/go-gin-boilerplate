@@ -4,9 +4,9 @@ import (
 	"context"
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
-	"github.com/irfan44/go-http-boilerplate/internal/domain/auth/service"
-	"github.com/irfan44/go-http-boilerplate/internal/dto"
-	"github.com/irfan44/go-http-boilerplate/pkg/errs"
+	"github.com/irfan44/go-gin-boilerplate/internal/domain/auth/service"
+	"github.com/irfan44/go-gin-boilerplate/internal/dto"
+	"github.com/irfan44/go-gin-boilerplate/pkg/errs"
 	"net/http"
 )
 

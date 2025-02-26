@@ -3,10 +3,10 @@ package example_service
 import (
 	"context"
 	"github.com/google/uuid"
-	"github.com/irfan44/go-http-boilerplate/internal/repository/example"
-	"github.com/irfan44/go-http-boilerplate/pkg/errs"
+	"github.com/irfan44/go-gin-boilerplate/internal/repository/example"
+	"github.com/irfan44/go-gin-boilerplate/pkg/errs"
 
-	"github.com/irfan44/go-http-boilerplate/internal/dto"
+	"github.com/irfan44/go-gin-boilerplate/internal/dto"
 )
 
 type (

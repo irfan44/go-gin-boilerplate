@@ -2,13 +2,13 @@ package user_service
 
 import (
 	"context"
-	"github.com/irfan44/go-http-boilerplate/internal/entity"
-	"github.com/irfan44/go-http-boilerplate/internal/repository/user"
-	"github.com/irfan44/go-http-boilerplate/pkg/errs"
-	"github.com/irfan44/go-http-boilerplate/pkg/internal_http"
+	"github.com/irfan44/go-gin-boilerplate/internal/entity"
+	"github.com/irfan44/go-gin-boilerplate/internal/repository/user"
+	"github.com/irfan44/go-gin-boilerplate/pkg/errs"
+	"github.com/irfan44/go-gin-boilerplate/pkg/internal_http"
 	"time"
 
-	"github.com/irfan44/go-http-boilerplate/internal/dto"
+	"github.com/irfan44/go-gin-boilerplate/internal/dto"
 )
 
 type (
