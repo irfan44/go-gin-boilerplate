@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
 	"github.com/irfan44/go-http-boilerplate/docs"
 	auth_handler "github.com/irfan44/go-http-boilerplate/internal/domain/auth/handler"
 	auth_service "github.com/irfan44/go-http-boilerplate/internal/domain/auth/service"
@@ -21,7 +22,6 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/go-playground/validator/v10"
 	"github.com/irfan44/go-http-boilerplate/internal/config"
 )
 
